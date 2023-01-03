@@ -1,6 +1,7 @@
 pipeline {
     agent any
     environment {
+        //be sure to replace "willbla" with your own Docker Hub username
         DOCKER_IMAGE_NAME = "danielfrance/train-schedule"
     }
     stages {
@@ -37,14 +38,14 @@ pipeline {
                 }
             }
         }
-        stage('CanaryDeploy) {
+        stage('CanaryDeploy') {
             when {
                 branch 'master'
             }
-            environment {
+            environment { 
                 CANARY_REPLICAS = 1
             }
-           steps {
+            steps {
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'train-schedule-kube-canary.yml',
@@ -56,7 +57,7 @@ pipeline {
             when {
                 branch 'master'
             }
-            environment {
+            environment { 
                 CANARY_REPLICAS = 0
             }
             steps {
@@ -67,7 +68,6 @@ pipeline {
                     configs: 'train-schedule-kube-canary.yml',
                     enableConfigSubstitution: true
                 )
-            }
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'train-schedule-kube.yml',
